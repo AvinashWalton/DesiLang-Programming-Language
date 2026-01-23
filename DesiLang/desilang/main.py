@@ -2,7 +2,7 @@
 
 import sys
 import os
-from interpreter import run_desilang
+from .interpreter import run_desilang
 
 def main():
     # Step 1: Check karo ki user ne file ka naam diya hai ya nahi
