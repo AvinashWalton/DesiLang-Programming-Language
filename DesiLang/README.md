@@ -14,9 +14,9 @@ Created by **Avinash Walton**.
 
 Ab DesiLang ko install karna bahut aasaan hai! Terminal mein bas ye likhein:
 
-```bash```
+```
 pip install desilang
-
+```
 
 
 ## 🏃 How to Run (Kaise Chalayein)
@@ -24,16 +24,16 @@ pip install desilang
 ### Method 1: Direct Command (Best for Users) 🚀
 Ek baar install karne ke baad, aap seedha desilang command use kar sakte hain:
 
-```bash```
+```
 desilang examples/analyst.desi
-
+```
 
 ### Method 2: Source Code (For Developers) 🛠️
 Agar aapne code download kiya hai, toh aise bhi chala sakte hain:
 
-```bash```
+```
 python -m desilang.main examples/analyst.desi
-
+```
 
 
 ## 📚 Documentation (Syntax Guide)
@@ -68,7 +68,7 @@ python -m desilang.main examples/analyst.desi
 
 
 ## 🧪 Example Code (analyst.desi)
-```bash```
+```
 
 safai
 bol "--- DATA LOADING ---"
@@ -85,7 +85,7 @@ bol total
 mano total_rows = gino(sales)
 bol "Total Rows:"
 bol total_rows
-
+```
 
 
 ## 📜 License
