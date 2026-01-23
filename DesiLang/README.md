@@ -67,7 +67,7 @@ python -m desilang.main examples/analyst.desi
 
 
 
-## 🧪 Example Code (analyst.desi)
+## 🧪 Example Code (```analyst.desi```)
 ```
 
 safai
