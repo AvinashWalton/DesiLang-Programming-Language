@@ -2,7 +2,7 @@ from setuptools import setup, find_packages # pyright: ignore[reportMissingModul
 
 setup(
     name="desilang",
-    version="1.0.2",
+    version="1.0.3",
     author="Avinash Walton",
     author_email="avinashwalton@gmail.com",  
     description="A Hinglish programming language for Indians 🇮🇳",
