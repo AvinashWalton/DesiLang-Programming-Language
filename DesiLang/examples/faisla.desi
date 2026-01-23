@@ -1,0 +1,22 @@
+# Step 2 Test: Logic check
+
+mano x = 10
+mano y = 20
+
+bol "--- IF/ELSE TEST ---"
+agar x < y
+    bol "Haan bhai, x chota hai y se"
+bas
+
+agar x > y
+    bol "Ye print nahi hona chahiye"
+bas
+
+bol "--- LOOP TEST ---"
+mano count = 1
+jab tak count < 4
+    bol count
+    mano count = count + 1
+khatam
+
+bol "Loop pura hua!"

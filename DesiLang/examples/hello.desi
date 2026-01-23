@@ -1,0 +1,10 @@
+# Yeh mera pehla DesiLang program hai
+
+mano samosa = 15
+mano chai = 10
+bol "Dukan wale bhaiya, total kitna hua?"
+bol samosa + chai
+
+mano discount = 5
+bol "Discount ke baad:"
+bol (samosa + chai) - discount

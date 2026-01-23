@@ -1,0 +1,33 @@
+# DesiLang Guessing Game 🎮
+
+safai
+bol "=============================="
+bol "   SWAGAT HAI DESI GAME ME    "
+bol "=============================="
+ruko 1
+
+mano magic_number = random.randint(1, 20)
+mano user_guess = 0
+mano attempts = 0
+
+bol "Maine 1 se 20 ke beech ek number socha hai."
+bol "Kya tum guess kar sakte ho?"
+bol " "
+
+jab tak user_guess != magic_number
+    mano user_guess = pooch "Apna guess dalo:"
+    mano attempts = attempts + 1
+
+    agar user_guess < magic_number
+        bol "❌ Galat! Thoda BADA number socho."
+    bas
+
+    agar user_guess > magic_number
+        bol "❌ Galat! Thoda CHOTA number socho."
+    bas
+khatam
+
+bol " "
+bol "🎉 Mubarak Ho! Jeet Gaye!"
+bol "Total Koshish:"
+bol attempts

@@ -1,0 +1,8 @@
+# Testing bol vs bolo
+
+bol "Main BOL use kar raha hoon."
+bolo "Main BOLO use kar raha hoon."
+
+mano x = 100
+bolo x
+

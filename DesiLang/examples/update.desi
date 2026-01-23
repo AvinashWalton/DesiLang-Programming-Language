@@ -1,0 +1,18 @@
+# Step 3 Test: Input aur Else
+
+bol "--- SECURITY CHECK ---"
+
+mano password = pooch "Password batao:"
+
+agar password == 1234
+    bol "Access Mil Gaya! Welcome Boss."
+    
+    mano saal = pooch "Apka birth year kya hai?"
+    mano age = 2025 - saal
+    bol "Aapki age hai:"
+    bol age
+warna
+    bol "Galat Password! Bhag yahan se."
+bas
+
+bol "Program Khatam."

@@ -1,0 +1,28 @@
+# DesiLang Data Analysis Demo 📊
+
+safai
+bol "--- DATA LOADING ---"
+mano sales = kholo("examples/sales.csv")
+bol sales
+
+bol "--- FILTER 1 (Delhi) ---"
+# .strip() lagaya taaki spaces ki wajah se galti na ho
+mano delhi_data = chano(sales, "city.strip() == 'Delhi'")
+bol delhi_data
+
+bol "--- FILTER 2 (Price > 20000) ---"
+mano mahanga = chhano(sales, "price > 20000")
+bol mahanga
+
+bol "--- CALCULATION ---"
+mano total = jodo(sales, "price")
+bol "Total Sales:"
+bol total
+
+
+mano data = kholo("examples/sales.csv")
+
+# Ab 'gino' use karo
+mano count = gin(data)
+bol "Total Rows:"
+bol count
