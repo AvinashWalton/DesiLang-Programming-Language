@@ -7,15 +7,32 @@ Created by **Avinash Walton**.
 ## 🚀 Key Features
 - **Hinglish Syntax:** Code naturally using words like `bol` or `bolo`.
 - **Data Analysis Ready:** Read CSVs, filter data (`chano`), and calculate stats (`ausat`, `jodo`) easily.
-- **Flexible:** Use `bol` or `bolo`, `chano` or `chhano` – both work!
+- **Flexible:** Use `bol` or `bolo`, `chano` or `chhano`, `gin` or `gino` – everything works!
 - **Logic Support:** Full support for `agar-warna` (If-Else) and `jab tak` (Loops).
 
-## 💻 Installation & Usage
+## 📦 Installation
 
-1. **Download** this repository.
-2. **Install dependencies** (optional, mostly built-in):
-   ```bash
-   pip install setuptools
+Ab DesiLang ko install karna bahut aasaan hai! Terminal mein bas ye likhein:
+
+```bash
+pip install desilang
+
+
+
+## 🏃 How to Run (Kaise Chalayein)
+
+### Method 1: Direct Command (Best for Users) 🚀
+Ek baar install karne ke baad, aap seedha desilang command use kar sakte hain:
+
+```bash
+desilang examples/analyst.desi
+
+
+### Method 2: Source Code (For Developers) 🛠️
+Agar aapne code download kiya hai, toh aise bhi chala sakte hain:
+
+```bash
+python -m desilang.main examples/analyst.desi
 
 
 
@@ -47,3 +64,29 @@ Created by **Avinash Walton**.
 | **bas** | End If Block | `bas` |
 | **jab tak** | While Loop | `jab tak x < 10` |
 | **khatam** | End Loop | `khatam` |
+
+
+
+## 🧪 Example Code (analyst.desi)
+```bash
+
+safai
+bol "--- DATA LOADING ---"
+mano sales = kholo("examples/sales.csv")
+
+bol "--- ANALYSIS ---"
+mano delhi_data = chano(sales, "city.strip() == 'Delhi'")
+bol delhi_data
+
+mano total = jodo(sales, "price")
+bol "Total Sales:"
+bol total
+
+mano total_rows = gino(sales)
+bol "Total Rows:"
+bol total_rows
+
+
+
+## 📜 License
+This project is licensed under the MIT License - free to use and modify.
