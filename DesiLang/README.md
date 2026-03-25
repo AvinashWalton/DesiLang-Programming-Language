@@ -35,6 +35,8 @@ Agar aapne code download kiya hai, toh aise bhi chala sakte hain:
 python -m desilang.main examples/analyst.desi
 ```
 
+## 🌐 Try Online (No Install!)
+👉 https://avinashwalton.github.io/DesiLang
 
 ## 📚 Documentation (Syntax Guide)
 
