@@ -72,7 +72,6 @@
   .footer-love { font-size:11px; color:var(--muted); }
   .footer-love span { color:var(--saffron); }
 
-  /* INPUT MODAL */
   #input-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:200; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
   #input-modal.show { display:flex; }
   .modal-box { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:24px; width:360px; box-shadow:0 20px 60px rgba(0,0,0,.5); }
@@ -82,7 +81,6 @@
   .modal-input:focus { border-color:var(--saffron); }
   .modal-btn { margin-top:12px; width:100%; background:linear-gradient(135deg,var(--saffron),var(--saffron-light)); color:#fff; border:none; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:14px; padding:10px; border-radius:8px; cursor:pointer; }
 
-  /* LOADING */
   #loading-overlay { position:fixed; inset:0; background:var(--navy); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:100; gap:20px; transition:opacity .5s; }
   .loading-logo { font-size:48px; font-weight:800; font-family:'Baloo 2',sans-serif; }
   .loading-logo span:nth-child(1){color:var(--saffron)} .loading-logo span:nth-child(2){color:#FFF} .loading-logo span:nth-child(3){color:var(--green)}
@@ -90,20 +88,17 @@
   .loading-bar { height:100%; background:linear-gradient(90deg,var(--saffron),var(--saffron-light)); border-radius:2px; animation:loadbar 3s ease-in-out forwards; }
   @keyframes loadbar { from{width:0%} to{width:100%} }
   .loading-text { font-size:14px; color:var(--muted); letter-spacing:1px; }
-
   ::-webkit-scrollbar{width:5px;height:5px} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 </style>
 </head>
 <body>
 
-<!-- LOADING -->
 <div id="loading-overlay">
   <div class="loading-logo"><span>Desi</span><span>Lang</span><span>🇮🇳</span></div>
   <div class="loading-bar-wrap"><div class="loading-bar"></div></div>
   <div class="loading-text" id="loading-msg">🇮🇳 DesiLang Interpreter boot ho raha hai...</div>
 </div>
 
-<!-- INPUT MODAL (for pooch command) -->
 <div id="input-modal">
   <div class="modal-box">
     <div class="modal-title">⌨️ pooch — User Input</div>
@@ -113,7 +108,6 @@
   </div>
 </div>
 
-<!-- HEADER -->
 <header>
   <div class="logo">
     <div class="logo-flag">🇮🇳</div>
@@ -123,17 +117,17 @@
     </div>
   </div>
   <div class="header-right">
-    <div class="badge">v1.1.0</div>
+    <div class="badge">v1.2.0</div>
     <div class="creator">by <strong>Avinash Walton</strong></div>
   </div>
 </header>
 
-<!-- TOOLBAR -->
 <div class="toolbar">
   <span class="toolbar-label">📁 Examples:</span>
   <button class="example-btn active" onclick="loadExample('hello',this)">👋 Hello</button>
   <button class="example-btn" onclick="loadExample('faisla',this)">🧠 Faisla</button>
   <button class="example-btn" onclick="loadExample('calculator',this)">🔢 Calculator</button>
+  <button class="example-btn" onclick="loadExample('functions',this)">🔧 Functions</button>
   <button class="example-btn" onclick="loadExample('game',this)">🎮 Game</button>
   <button class="example-btn" onclick="loadExample('analyst',this)">📊 Analyst</button>
   <button class="example-btn" onclick="loadExample('update',this)">🔐 Update</button>
@@ -142,7 +136,6 @@
   <span class="status-text" id="status-text">Load ho raha hai...</span>
 </div>
 
-<!-- MAIN -->
 <div class="main">
   <div class="editor-panel">
     <div class="panel-header">
@@ -168,26 +161,28 @@
     <div id="output">
       <div class="output-placeholder">▷ "Chalao!" dabao ya Ctrl+Enter karo...
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📚 DesiLang Commands:
+📚 DesiLang v1.2.0 Commands:
   bolo "text"        → Print karo
   mano x = 10        → Variable banao
   agar x > 5         → If condition
-    ...
   warna              → Else
-    ...
   bas                → End if
-  jab tak x &lt; 10   → While loop
-    ...
+  jab tak x &lt; 10  → While loop
   khatam             → End loop
-  pooch "Batao:"     → User se input lo
+  pooch "Batao:"     → User input lo
   safai              → Screen saaf karo
   ruko 2             → 2 sec ruko
+  ─────────────────────────────
+  🔧 NEW — Functions (v1.2.0):
+  kaam greet(naam):  → Function banao
+      bolo naam
+  khatam
+  wapas value        → Return karo
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
     </div>
   </div>
 </div>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-info">
     <span>🐍 <strong>Pyodide</strong> powered</span>
@@ -201,9 +196,9 @@
 <script>
 let pyodide = null;
 let isReady = false;
-let inputResolve = null; // For pooch (input) support
+let inputResolve = null;
 
-// ===================== EXAMPLES (Real .desi files) =====================
+// ===================== EXAMPLES =====================
 const EXAMPLES = {
 
 hello: `# Yeh mera pehla DesiLang program hai
@@ -260,30 +255,65 @@ bolo guna
 bolo "Bhag (Division):"
 bolo bhag`,
 
+functions: `# 🔧 Functions (kaam) — v1.2.0 NEW!
+
+# Simple function
+kaam namaste(naam):
+    bolo "Namaste, " + naam + "!"
+    bolo "DesiLang mein swagat hai!"
+khatam
+
+namaste("Avinash")
+namaste("India")
+
+# Return value wali function (wapas)
+kaam jodo_do(a, b):
+    wapas a + b
+khatam
+
+mano result = jodo_do(15, 25)
+bolo "15 + 25 ="
+bolo result
+
+# Grade calculator function
+kaam grade(marks):
+    agar marks >= 90
+        wapas "A+"
+    bas
+    agar marks >= 75
+        wapas "A"
+    bas
+    agar marks >= 60
+        wapas "B"
+    bas
+    wapas "C"
+khatam
+
+mano g1 = grade(95)
+mano g2 = grade(80)
+mano g3 = grade(55)
+bolo "95 ka grade:"
+bolo g1
+bolo "80 ka grade:"
+bolo g2
+bolo "55 ka grade:"
+bolo g3`,
+
 game: `# DesiLang Guessing Game 🎮
-# random.randint use karke magic number banta hai
 
 bolo "=============================="
 bolo "   SWAGAT HAI DESI GAME ME!  "
 bolo "=============================="
 
 mano magic_number = random.randint(1, 10)
-mano attempts = 0
-
-bolo "Maine 1 se 10 ke beech ek number socha hai."
-bolo "Apna guess likho neeche (pooch se):"
-
 mano user_guess = pooch "Apna guess dalo (1-10):"
-mano attempts = 1
 
 agar user_guess == magic_number
-    bolo "🎉 Mubarak Ho! Pehli baar mein jeet gaye!"
+    bolo "🎉 Mubarak Ho! Sahi jawab!"
 bas
-
 agar user_guess < magic_number
     bolo "❌ Thoda BADA socho!"
 bas
-
 agar user_guess > magic_number
     bolo "❌ Thoda CHOTA socho!"
 bas
@@ -292,7 +322,6 @@ bolo "Sahi jawab tha:"
 bolo magic_number`,
 
 analyst: `# DesiLang Data Analysis Demo 📊
-# Built-in sales data use ho rahi hai
 
 bolo "--- DATA LOADED ---"
 bolo "Total items:"
@@ -303,7 +332,7 @@ mano delhi_data = chano(SALES_DATA, "city == 'Delhi'")
 bolo "Delhi mein items:"
 bolo gino(delhi_data)
 
-bolo "--- EXPENSIVE ITEMS (price > 20000) ---"
+bolo "--- EXPENSIVE (price > 20000) ---"
 mano mahanga = chano(SALES_DATA, "price > 20000")
 bolo gino(mahanga)
 
@@ -313,32 +342,27 @@ bolo total
 
 bolo "--- AVERAGE PRICE ---"
 mano avg = ausat(SALES_DATA, "price")
-bolo avg
-
-bolo "--- PATNA ITEMS ---"
-mano patna = chano(SALES_DATA, "city == 'Patna'")
-bolo patna`,
+bolo avg`,
 
 update: `# Security Check + Input Demo 🔐
 
 bolo "--- SECURITY CHECK ---"
-
 mano password = pooch "Password batao (hint: 1234):"
 
 agar password == 1234
-    bolo "✅ Access Mil Gaya! Welcome Boss."
+    bolo "Access Mil Gaya! Welcome Boss."
     mano saal = pooch "Apka birth year kya hai?"
     mano age = 2025 - saal
     bolo "Aapki age hai:"
     bolo age
 warna
-    bolo "❌ Galat Password! Bhag yahan se."
+    bolo "Galat Password! Bhag yahan se."
 bas
 
 bolo "Program Khatam."`,
 };
 
-// ===================== SALES DATA (built-in CSV) =====================
+// ===================== SALES DATA =====================
 const SALES_CSV = `item,city,price,quantity
 Gaming Laptop,Delhi,55000,1
 Android Phone,Mumbai,18000,2
@@ -364,7 +388,7 @@ function csvToList(csv) {
   });
 }
 
-// ===================== INTERPRETER (Python code as string) =====================
+// ===================== INTERPRETER v1.2.0 =====================
 const INTERPRETER_PY = `
 import random
 import math
@@ -393,13 +417,16 @@ def filter_data(data, cond):
             except: pass
     return out
 
-EVAL_CTX = {
+BASE_CTX = {
     "random": random, "math": math,
     "jodo": jodo_col, "ausat": ausat_col,
     "chano": filter_data, "chhano": filter_data,
     "gin": len, "gino": len,
     "SALES_DATA": SALES_DATA,
     "sahi": True, "galat": False,
+    "len": len, "range": range,
+    "int": int, "float": float, "str": str,
+    "abs": abs, "round": round,
 }
 
 def desi_print(val, out):
@@ -415,8 +442,10 @@ def desi_print(val, out):
     else:
         out.append(("normal", str(val)))
 
-def run_desi(code, out, inputs_list):
-    variables = {}
+# ── CORE RUNNER ──────────────────────────────────────────────
+def run_desi(code, out, inputs_list, _vars=None, _funcs=None):
+    variables = _vars if _vars is not None else {}
+    functions = _funcs if _funcs is not None else {}
     input_idx = [0]
 
     def get_input(prompt):
@@ -437,46 +466,109 @@ def run_desi(code, out, inputs_list):
             try: return float(v)
             except: return v
 
-    lines = code.split("\\n")
-    i = 0
+    def get_ctx():
+        ctx = {**BASE_CTX, **variables}
+        for fname, fdef in functions.items():
+            ctx[fname] = make_callable(fname)
+        return ctx
 
+    def make_callable(fname):
+        def fn(*args):
+            return call_func(fname, list(args))
+        return fn
+
+    def call_func(fname, args):
+        if fname not in functions:
+            out.append(("error", f"❌ '{fname}' naam ka kaam nahi mila!"))
+            return None
+        fdef = functions[fname]
+        local_vars = dict(variables)
+        for p, a in zip(fdef["params"], args):
+            local_vars[p] = a
+        ret = run_desi("\\n".join(fdef["body"]), out, inputs_list, local_vars, functions)
+        return ret
+
+    lines = code.split("\\n")
+
+    # ── PASS 1: Collect kaam (functions) ──
+    skip = set()
+    i = 0
     while i < len(lines):
         line = lines[i].strip()
-        if not line or line.startswith("#"):
-            i += 1; continue
+        if line.startswith("kaam "):
+            skip.add(i)
+            header = line[5:].strip().rstrip(":")
+            if "(" in header:
+                fname = header[:header.index("(")].strip()
+                pstr  = header[header.index("(")+1:header.index(")")].strip()
+                params = [p.strip() for p in pstr.split(",") if p.strip()]
+            else:
+                fname = header.strip(); params = []
+            body = []; i += 1
+            nest = 0
+            while i < len(lines):
+                curr = lines[i].strip()
+                skip.add(i)
+                if curr.startswith("kaam "): nest += 1
+                if curr == "khatam":
+                    if nest == 0: break
+                    nest -= 1
+                body.append(lines[i]); i += 1
+            skip.add(i)
+            functions[fname] = {"params": params, "body": body}
+        i += 1
 
+    # ── PASS 2: Run code ──
+    i = 0
+    while i < len(lines):
+        if i in skip: i += 1; continue
+
+        raw  = lines[i]
+        line = raw.strip()
+        if not line or line.startswith("#"): i += 1; continue
+
+        ctx = get_ctx()
+
+        # bolo / bol
         if line.startswith("bolo ") or line.startswith("bol "):
             expr = line[5:].strip() if line.startswith("bolo ") else line[4:].strip()
-            if expr.startswith('"') and expr.endswith('"'):
+            # Pure string (exactly 2 quotes, no concatenation)
+            if expr.startswith('"') and expr.endswith('"') and expr.count('"') == 2:
                 out.append(("normal", expr[1:-1]))
-            elif expr == ' ' or expr == "":
-                out.append(("normal", ""))
             else:
                 try:
-                    ctx = {**variables, **EVAL_CTX}
                     desi_print(eval(expr, {}, ctx), out)
                 except Exception as e:
-                    out.append(("error", f"⚠️ Error bol: {expr} → {e}"))
+                    out.append(("error", f"⚠️ bolo error: {expr} → {e}"))
             i += 1
 
+        # mano
         elif line.startswith("mano "):
             parts = line[5:].split("=", 1)
             if len(parts) < 2:
                 out.append(("error", f"❌ Line {i+1}: '=' nahi mila")); i += 1; continue
             vname = parts[0].strip()
-            expr = parts[1].strip()
+            expr  = parts[1].strip()
             if expr.startswith("pooch "):
                 prompt = expr[6:].strip().strip('"')
                 variables[vname] = get_input(prompt)
             else:
-                ctx = {**variables, **EVAL_CTX}
                 try: variables[vname] = eval(expr, {}, ctx)
-                except Exception as e: out.append(("error", f"❌ mano error '{vname}': {e}"))
+                except Exception as e:
+                    out.append(("error", f"❌ mano '{vname}': {e}"))
             i += 1
 
+        # wapas (return)
+        elif line.startswith("wapas "):
+            expr = line[6:].strip()
+            try: return eval(expr, {}, ctx)
+            except Exception as e:
+                out.append(("error", f"❌ wapas error: {e}"))
+                return None
+
+        # agar
         elif line.startswith("agar "):
             cond = line[5:].strip()
-            ctx = {**variables, **EVAL_CTX}
             try: res = eval(cond, {}, ctx)
             except: res = False
             if res: i += 1
@@ -492,6 +584,7 @@ def run_desi(code, out, inputs_list):
                         nest -= 1
                     if c == "warna" and nest == 0: break
 
+        # warna
         elif line == "warna":
             nest = 0
             while i < len(lines):
@@ -506,11 +599,11 @@ def run_desi(code, out, inputs_list):
 
         elif line == "bas": i += 1
 
+        # jab tak
         elif line.startswith("jab tak "):
             cond = line[8:].strip()
-            ctx = {**variables, **EVAL_CTX}
             try:
-                if eval(cond, {}, ctx): i += 1
+                if eval(cond, {}, get_ctx()): i += 1
                 else:
                     nest = 0
                     while i < len(lines):
@@ -524,6 +617,7 @@ def run_desi(code, out, inputs_list):
                     i += 1
             except: i += 1
 
+        # khatam (loop end)
         elif line == "khatam":
             s = i; nest = 0
             while s >= 0:
@@ -536,15 +630,19 @@ def run_desi(code, out, inputs_list):
             if s < 0: i += 1
 
         elif line == "safai":
-            out.clear(); out.append(("info","🧹 Saaf!")); i += 1
+            out.clear(); out.append(("info", "🧹 Screen saaf ho gayi!")); i += 1
 
         elif line.startswith("ruko "):
-            out.append(("info", f"⏳ ruko {line[5:].strip()} sec (browser mein skip)")); i += 1
+            out.append(("info", f"⏳ ruko {line[5:].strip()} sec...")); i += 1
 
+        # Direct function call ya expression
         else:
-            out.append(("error", f"❌ Line {i+1}: samajh nahi aaya → '{line}'")); i += 1
+            try: eval(line, {}, ctx)
+            except Exception as e:
+                out.append(("error", f"❌ Line {i+1}: samajh nahi aaya → '{line}'"))
+            i += 1
 
-    return out
+    return None
 `;
 
 // ===================== PYODIDE SETUP =====================
@@ -569,7 +667,7 @@ async function loadPyodideEngine() {
   }
 }
 
-// ===================== POOCH (INPUT) SYSTEM =====================
+// ===================== INPUT SYSTEM =====================
 function askUser(prompt) {
   return new Promise(resolve => {
     inputResolve = resolve;
@@ -602,19 +700,13 @@ async function runCode() {
   runBtn.innerHTML = '<span>⏳</span> Chal raha hai...';
   output.innerHTML = '';
 
-  // Collect all pooch inputs first by pre-scanning
-  // We'll run interpreter, intercept input_prompt outputs, ask user
+  // Collect pooch inputs
   let collectedInputs = [];
-
-  // First pass: find how many pooch calls exist
   const poochCount = (code.match(/pooch\s+/g) || []).length;
-
-  // Collect inputs if needed
   if (poochCount > 0) {
+    const regex = /pooch\s+"([^"]*)"/g;
+    const matches = [...code.matchAll(regex)];
     for (let p = 0; p < poochCount; p++) {
-      // Get prompt text from code
-      const regex = /pooch\s+"([^"]*)"/g;
-      const matches = [...code.matchAll(regex)];
       const promptText = matches[p] ? matches[p][1] : `Input ${p+1}`;
       const val = await askUser(promptText);
       collectedInputs.push(val);
@@ -623,11 +715,10 @@ async function runCode() {
 
   try {
     const t0 = Date.now();
-    const inputsJson = JSON.stringify(collectedInputs);
     const result = await pyodide.runPythonAsync(`
 out = []
 try:
-    run_desi(${JSON.stringify(code)}, out, ${inputsJson})
+    run_desi(${JSON.stringify(code)}, out, ${JSON.stringify(collectedInputs)})
 except Exception as e:
     out.append(("error", f"💥 {e}"))
 [[x[0], x[1]] for x in out]
@@ -664,7 +755,7 @@ except Exception as e:
   runBtn.innerHTML = '<span>▶</span> Chalao!';
 }
 
-// ===================== EXAMPLES =====================
+// ===================== HELPERS =====================
 function loadExample(name, btn) {
   document.getElementById('code-editor').value = EXAMPLES[name] || '';
   updateLineNumbers();
@@ -672,7 +763,6 @@ function loadExample(name, btn) {
   if (btn) btn.classList.add('active');
 }
 
-// ===================== EDITOR HELPERS =====================
 function updateLineNumbers() {
   const lines = document.getElementById('code-editor').value.split('\n');
   document.getElementById('line-numbers').innerHTML =
@@ -699,7 +789,6 @@ function clearOutput() {
   document.getElementById('output').innerHTML = '<span class="output-info">🧹 Saaf ho gayi!</span>';
 }
 
-// ===================== START =====================
 loadPyodideEngine();
 updateLineNumbers();
 </script>
