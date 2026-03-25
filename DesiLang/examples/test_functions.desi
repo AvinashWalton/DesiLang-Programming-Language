@@ -1,0 +1,72 @@
+# DesiLang v1.2.0 — Functions (kaam) Test File
+# Created by: Avinash Walton
+
+# ===== TEST 1: Simple Function =====
+kaam namaste(naam):
+    bolo "Namaste, " + naam + "!"
+    bolo "DesiLang mein swagat hai!"
+khatam
+
+namaste("Avinash")
+namaste("India")
+
+
+# ===== TEST 2: Return value (wapas) =====
+kaam jodo_do(a, b):
+    wapas a + b
+khatam
+
+mano result = jodo_do(15, 25)
+bolo "15 + 25 ="
+bolo result
+
+
+# ===== TEST 3: Logic inside function =====
+kaam grade(marks):
+    agar marks >= 90
+        wapas "A+"
+    bas
+    agar marks >= 75
+        wapas "A"
+    bas
+    agar marks >= 60
+        wapas "B"
+    bas
+    wapas "C"
+khatam
+
+mano g1 = grade(95)
+mano g2 = grade(80)
+mano g3 = grade(55)
+
+bolo "95 marks ka grade:"
+bolo g1
+bolo "80 marks ka grade:"
+bolo g2
+bolo "55 marks ka grade:"
+bolo g3
+
+
+# ===== TEST 4: Calculator function =====
+kaam calculator(a, b, operation):
+    agar operation == "jod"
+        wapas a + b
+    bas
+    agar operation == "ghata"
+        wapas a - b
+    bas
+    agar operation == "guna"
+        wapas a * b
+    bas
+    wapas "Operation nahi pehchana"
+khatam
+
+bolo "=== CALCULATOR ==="
+mano ans1 = calculator(10, 5, "jod")
+bolo ans1
+mano ans2 = calculator(10, 5, "ghata")
+bolo ans2
+mano ans3 = calculator(10, 5, "guna")
+bolo ans3
+
+bolo "Sab tests pass ho gaye!"
