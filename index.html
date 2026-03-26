@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DesiLang Playground 🇮🇳</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Baloo+2:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --saffron: #FF6B00; --saffron-light: #FF8C00;
+    --green: #00A550; --navy: #0A0E1A; --panel: #0F1525;
+    --card: #151C30; --border: #1E2A45; --text: #E8EAF0;
+    --muted: #5C6B8A; --output-bg: #080C16;
+    --success: #00D4AA; --error: #FF4567;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--navy); color:var(--text); font-family:'Baloo 2',sans-serif; height:100vh; display:flex; flex-direction:column; overflow:hidden; }
+
+  header { background:var(--panel); border-bottom:2px solid var(--border); padding:10px 20px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; position:relative; overflow:hidden; }
+  header::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#FF6B00,#FF8C00,#FFFFFF,#00A550); }
+  .logo { display:flex; align-items:center; gap:12px; }
+  .logo-flag { font-size:28px; }
+  .logo-text { font-size:22px; font-weight:800; letter-spacing:-0.5px; }
+  .logo-text span:nth-child(1){color:var(--saffron)} .logo-text span:nth-child(2){color:#FFF} .logo-text span:nth-child(3){color:var(--green)}
+  .logo-sub { font-size:11px; color:var(--muted); letter-spacing:2px; text-transform:uppercase; margin-top:2px; }
+  .header-right { display:flex; align-items:center; gap:12px; }
+  .badge { background:rgba(255,107,0,.15); border:1px solid rgba(255,107,0,.4); color:var(--saffron); font-size:11px; font-weight:600; padding:4px 10px; border-radius:20px; letter-spacing:1px; text-transform:uppercase; }
+  .creator { font-size:12px; color:var(--muted); }
+  .creator strong { color:var(--text); }
+
+  .toolbar { background:var(--card); border-bottom:1px solid var(--border); padding:8px 16px; display:flex; align-items:center; gap:8px; flex-shrink:0; flex-wrap:wrap; }
+  .toolbar-label { font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+  .example-btn { background:var(--panel); border:1px solid var(--border); color:var(--text); font-family:'Baloo 2',sans-serif; font-size:12px; padding:5px 12px; border-radius:6px; cursor:pointer; transition:all .2s; white-space:nowrap; }
+  .example-btn:hover,.example-btn.active { border-color:var(--saffron); color:var(--saffron); background:rgba(255,107,0,.08); }
+  .spacer { flex:1; }
+  .status-dot { width:8px; height:8px; border-radius:50%; background:var(--muted); transition:all .3s; }
+  .status-dot.loading { background:var(--saffron); animation:pulse 1s infinite; }
+  .status-dot.ready { background:var(--success); }
+  .status-dot.error { background:var(--error); }
+  .status-text { font-size:12px; color:var(--muted); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  .main { display:flex; flex:1; overflow:hidden; }
+  .editor-panel { flex:1; display:flex; flex-direction:column; border-right:2px solid var(--border); min-width:0; }
+  .panel-header { background:var(--card); border-bottom:1px solid var(--border); padding:8px 16px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+  .panel-title { font-size:12px; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; display:flex; align-items:center; gap:8px; }
+  .panel-title::before { content:''; width:3px; height:14px; background:var(--saffron); border-radius:2px; }
+  .run-btn { background:linear-gradient(135deg,var(--saffron),var(--saffron-light)); color:#fff; border:none; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:14px; padding:8px 24px; border-radius:8px; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:8px; box-shadow:0 4px 15px rgba(255,107,0,.3); }
+  .run-btn:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(255,107,0,.45); }
+  .run-btn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
+  .editor-wrapper { flex:1; position:relative; overflow:hidden; }
+  .line-numbers { position:absolute; left:0; top:0; bottom:0; width:48px; background:var(--panel); border-right:1px solid var(--border); padding:16px 8px; overflow:hidden; z-index:1; user-select:none; }
+  .line-num { font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--muted); line-height:21px; text-align:right; }
+  textarea#code-editor { position:absolute; top:0; left:48px; right:0; bottom:0; background:var(--output-bg); color:var(--text); border:none; outline:none; resize:none; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:21px; padding:16px; caret-color:var(--saffron); white-space:pre; overflow-wrap:normal; overflow-x:auto; }
+  textarea#code-editor::selection { background:rgba(255,107,0,.25); }
+
+  .output-panel { width:42%; display:flex; flex-direction:column; min-width:280px; }
+  .output-header { background:var(--card); border-bottom:1px solid var(--border); padding:8px 16px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+  .output-title { font-size:12px; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; display:flex; align-items:center; gap:8px; }
+  .output-title::before { content:''; width:3px; height:14px; background:var(--success); border-radius:2px; }
+  .clear-btn { background:transparent; border:1px solid var(--border); color:var(--muted); font-family:'Baloo 2',sans-serif; font-size:11px; padding:4px 10px; border-radius:5px; cursor:pointer; transition:all .2s; }
+  .clear-btn:hover { border-color:var(--error); color:var(--error); }
+  #output { flex:1; background:var(--output-bg); padding:16px; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.7; overflow-y:auto; white-space:pre-wrap; word-break:break-word; }
+  #output::-webkit-scrollbar { width:6px; } #output::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+  .output-line{color:var(--text)} .output-error{color:var(--error)} .output-success{color:var(--success)} .output-info{color:var(--saffron)} .output-table{color:#7DD3FC}
+  .output-placeholder { color:var(--muted); font-style:italic; font-size:12px; line-height:1.8; }
+
+  footer { background:var(--panel); border-top:1px solid var(--border); padding:6px 16px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+  .footer-info { font-size:11px; color:var(--muted); display:flex; gap:20px; }
+  .footer-info strong { color:var(--text); }
+  .footer-love { font-size:11px; color:var(--muted); }
+  .footer-love span { color:var(--saffron); }
+
+  #input-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:200; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
+  #input-modal.show { display:flex; }
+  .modal-box { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:24px; width:360px; box-shadow:0 20px 60px rgba(0,0,0,.5); }
+  .modal-title { font-size:14px; color:var(--muted); margin-bottom:8px; letter-spacing:1px; text-transform:uppercase; }
+  .modal-prompt { font-size:16px; font-weight:600; color:var(--text); margin-bottom:16px; }
+  .modal-input { width:100%; background:var(--output-bg); border:1px solid var(--border); color:var(--text); font-family:'JetBrains Mono',monospace; font-size:14px; padding:10px 14px; border-radius:8px; outline:none; transition:border-color .2s; }
+  .modal-input:focus { border-color:var(--saffron); }
+  .modal-btn { margin-top:12px; width:100%; background:linear-gradient(135deg,var(--saffron),var(--saffron-light)); color:#fff; border:none; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:14px; padding:10px; border-radius:8px; cursor:pointer; }
+
+  #loading-overlay { position:fixed; inset:0; background:var(--navy); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:100; gap:20px; transition:opacity .5s; }
+  .loading-logo { font-size:48px; font-weight:800; font-family:'Baloo 2',sans-serif; }
+  .loading-logo span:nth-child(1){color:var(--saffron)} .loading-logo span:nth-child(2){color:#FFF} .loading-logo span:nth-child(3){color:var(--green)}
+  .loading-bar-wrap { width:240px; height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
+  .loading-bar { height:100%; background:linear-gradient(90deg,var(--saffron),var(--saffron-light)); border-radius:2px; animation:loadbar 3s ease-in-out forwards; }
+  @keyframes loadbar { from{width:0%} to{width:100%} }
+  .loading-text { font-size:14px; color:var(--muted); letter-spacing:1px; }
+  ::-webkit-scrollbar{width:5px;height:5px} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+</head>
+<body>
+
+<div id="loading-overlay">
+  <div class="loading-logo"><span>Desi</span><span>Lang</span><span>🇮🇳</span></div>
+  <div class="loading-bar-wrap"><div class="loading-bar"></div></div>
+  <div class="loading-text" id="loading-msg">🇮🇳 DesiLang Interpreter boot ho raha hai...</div>
+</div>
+
+<div id="input-modal">
+  <div class="modal-box">
+    <div class="modal-title">⌨️ pooch — User Input</div>
+    <div class="modal-prompt" id="modal-prompt">Kuch daalo:</div>
+    <input type="text" class="modal-input" id="modal-input" placeholder="Yahan likho...">
+    <button class="modal-btn" onclick="submitInput()">✓ Daalo (Enter)</button>
+  </div>
+</div>
+
+<header>
+  <div class="logo">
+    <div class="logo-flag">🇮🇳</div>
+    <div>
+      <div class="logo-text"><span>Desi</span><span>Lang</span><span> Playground</span></div>
+      <div class="logo-sub">India's First Hinglish Programming Language</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="badge">v1.2.0</div>
+    <div class="creator">by <strong>Avinash Walton</strong></div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <span class="toolbar-label">📁 Examples:</span>
+  <button class="example-btn active" onclick="loadExample('hello',this)">👋 Hello</button>
+  <button class="example-btn" onclick="loadExample('faisla',this)">🧠 Faisla</button>
+  <button class="example-btn" onclick="loadExample('calculator',this)">🔢 Calculator</button>
+  <button class="example-btn" onclick="loadExample('functions',this)">🔧 Functions</button>
+  <button class="example-btn" onclick="loadExample('game',this)">🎮 Game</button>
+  <button class="example-btn" onclick="loadExample('analyst',this)">📊 Analyst</button>
+  <button class="example-btn" onclick="loadExample('update',this)">🔐 Update</button>
+  <div class="spacer"></div>
+  <div class="status-dot loading" id="status-dot"></div>
+  <span class="status-text" id="status-text">Load ho raha hai...</span>
+</div>
+
+<div class="main">
+  <div class="editor-panel">
+    <div class="panel-header">
+      <div class="panel-title">Code Editor (.desi) &nbsp;|&nbsp; Ctrl+Enter = Chalao</div>
+      <button class="run-btn" id="run-btn" onclick="runCode()" disabled>
+        <span>▶</span> Chalao!
+      </button>
+    </div>
+    <div class="editor-wrapper">
+      <div class="line-numbers" id="line-numbers"><div class="line-num">1</div></div>
+      <textarea id="code-editor" spellcheck="false"
+        oninput="updateLineNumbers()"
+        onkeydown="handleTab(event)"
+        onscroll="syncScroll()"></textarea>
+    </div>
+  </div>
+
+  <div class="output-panel">
+    <div class="output-header">
+      <div class="output-title">Output (Nateeja)</div>
+      <button class="clear-btn" onclick="clearOutput()">🗑 Saaf Karo</button>
+    </div>
+    <div id="output">
+      <div class="output-placeholder">▷ "Chalao!" dabao ya Ctrl+Enter karo...
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📚 DesiLang v1.2.0 Commands:
+  bolo "text"        → Print karo
+  mano x = 10        → Variable banao
+  agar x > 5         → If condition
+  warna              → Else
+  bas                → End if
+  jab tak x &lt; 10  → While loop
+  khatam             → End loop
+  pooch "Batao:"     → User input lo
+  safai              → Screen saaf karo
+  ruko 2             → 2 sec ruko
+  ─────────────────────────────
+  🔧 NEW — Functions (v1.2.0):
+  kaam greet(naam):  → Function banao
+      bolo naam
+  khatam
+  wapas value        → Return karo
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-info">
+    <span>🐍 <strong>Pyodide</strong> powered</span>
+    <span>🌐 <strong>100%</strong> Browser-based</span>
+    <span>📦 pip install <strong>desilang</strong></span>
+  </div>
+  <div class="footer-love">Made with <span>❤️</span> in India 🇮🇳 | github.com/AvinashWalton/DesiLang</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+<script>
+let pyodide = null;
+let isReady = false;
+let inputResolve = null;
+
+// ===================== EXAMPLES =====================
+const EXAMPLES = {
+
+hello: `# Yeh mera pehla DesiLang program hai
+
+mano samosa = 15
+mano chai = 10
+bolo "Dukan wale bhaiya, total kitna hua?"
+bolo samosa + chai
+
+mano discount = 5
+bolo "Discount ke baad:"
+bolo (samosa + chai) - discount`,
+
+faisla: `# Logic Check - Agar/Warna/Loop
+
+mano x = 10
+mano y = 20
+
+bolo "--- IF/ELSE TEST ---"
+agar x < y
+    bolo "Haan bhai, x chota hai y se"
+bas
+
+agar x > y
+    bolo "Ye print nahi hona chahiye"
+bas
+
+bolo "--- LOOP TEST ---"
+mano count = 1
+jab tak count < 4
+    bolo count
+    mano count = count + 1
+khatam
+
+bolo "Loop pura hua!"`,
+
+calculator: `# DesiLang Calculator 🔢
+
+mano a = 50
+mano b = 30
+
+mano jod = a + b
+mano ghata = a - b
+mano guna = a * b
+mano bhag = a / b
+
+bolo "=== CALCULATOR ==="
+bolo "Jod (Addition):"
+bolo jod
+bolo "Ghata (Subtraction):"
+bolo ghata
+bolo "Guna (Multiplication):"
+bolo guna
+bolo "Bhag (Division):"
+bolo bhag`,
+
+functions: `# 🔧 Functions (kaam) — v1.2.0 NEW!
+
+# Simple function
+kaam namaste(naam):
+    bolo "Namaste, " + naam + "!"
+    bolo "DesiLang mein swagat hai!"
+khatam
+
+namaste("Avinash")
+namaste("India")
+
+# Return value wali function (wapas)
+kaam jodo_do(a, b):
+    wapas a + b
+khatam
+
+mano result = jodo_do(15, 25)
+bolo "15 + 25 ="
+bolo result
+
+# Grade calculator function
+kaam grade(marks):
+    agar marks >= 90
+        wapas "A+"
+    bas
+    agar marks >= 75
+        wapas "A"
+    bas
+    agar marks >= 60
+        wapas "B"
+    bas
+    wapas "C"
+khatam
+
+mano g1 = grade(95)
+mano g2 = grade(80)
+mano g3 = grade(55)
+bolo "95 ka grade:"
+bolo g1
+bolo "80 ka grade:"
+bolo g2
+bolo "55 ka grade:"
+bolo g3`,
+
+game: `# DesiLang Guessing Game 🎮
+
+bolo "=============================="
+bolo "   SWAGAT HAI DESI GAME ME!  "
+bolo "=============================="
+
+mano magic_number = random.randint(1, 10)
+mano user_guess = pooch "Apna guess dalo (1-10):"
+
+agar user_guess == magic_number
+    bolo "🎉 Mubarak Ho! Sahi jawab!"
+bas
+agar user_guess < magic_number
+    bolo "❌ Thoda BADA socho!"
+bas
+agar user_guess > magic_number
+    bolo "❌ Thoda CHOTA socho!"
+bas
+
+bolo "Sahi jawab tha:"
+bolo magic_number`,
+
+analyst: `# DesiLang Data Analysis Demo 📊
+
+bolo "--- DATA LOADED ---"
+bolo "Total items:"
+bolo gino(SALES_DATA)
+
+bolo "--- DELHI FILTER ---"
+mano delhi_data = chano(SALES_DATA, "city == 'Delhi'")
+bolo "Delhi mein items:"
+bolo gino(delhi_data)
+
+bolo "--- EXPENSIVE (price > 20000) ---"
+mano mahanga = chano(SALES_DATA, "price > 20000")
+bolo gino(mahanga)
+
+bolo "--- TOTAL SALES ---"
+mano total = jodo(SALES_DATA, "price")
+bolo total
+
+bolo "--- AVERAGE PRICE ---"
+mano avg = ausat(SALES_DATA, "price")
+bolo avg`,
+
+update: `# Security Check + Input Demo 🔐
+
+bolo "--- SECURITY CHECK ---"
+mano password = pooch "Password batao (hint: 1234):"
+
+agar password == 1234
+    bolo "Access Mil Gaya! Welcome Boss."
+    mano saal = pooch "Apka birth year kya hai?"
+    mano age = 2025 - saal
+    bolo "Aapki age hai:"
+    bolo age
+warna
+    bolo "Galat Password! Bhag yahan se."
+bas
+
+bolo "Program Khatam."`,
+};
+
+// ===================== SALES DATA =====================
+const SALES_CSV = `item,city,price,quantity
+Gaming Laptop,Delhi,55000,1
+Android Phone,Mumbai,18000,2
+iPhone 15,Delhi,80000,1
+Smart Watch,Patna,3500,5
+Tablet,Delhi,15000,3
+Monitor,Patna,12000,2
+Gaming PC,Mumbai,95000,1
+Headphone,Delhi,2500,10`;
+
+function csvToList(csv) {
+  const lines = csv.trim().split('\n');
+  const headers = lines[0].split(',').map(h => h.trim());
+  return lines.slice(1).map(line => {
+    const vals = line.split(',');
+    const row = {};
+    headers.forEach((h, i) => {
+      const v = vals[i]?.trim() || '';
+      const n = Number(v);
+      row[h] = isNaN(n) ? v : n;
+    });
+    return row;
+  });
+}
+
+// ===================== INTERPRETER v1.2.0 =====================
+const INTERPRETER_PY = `
+import random
+import math
+
+SALES_DATA = ${JSON.stringify(csvToList(SALES_CSV))}
+
+def jodo_col(data, col):
+    t = 0
+    if isinstance(data, list):
+        for row in data:
+            try: t += float(row.get(col, 0))
+            except: pass
+    return t
+
+def ausat_col(data, col):
+    t = jodo_col(data, col)
+    n = len(data) if isinstance(data, list) else 0
+    return round(t/n, 2) if n else 0
+
+def filter_data(data, cond):
+    out = []
+    if isinstance(data, list):
+        for row in data:
+            try:
+                if eval(cond, {}, row): out.append(row)
+            except: pass
+    return out
+
+BASE_CTX = {
+    "random": random, "math": math,
+    "jodo": jodo_col, "ausat": ausat_col,
+    "chano": filter_data, "chhano": filter_data,
+    "gin": len, "gino": len,
+    "SALES_DATA": SALES_DATA,
+    "sahi": True, "galat": False,
+    "len": len, "range": range,
+    "int": int, "float": float, "str": str,
+    "abs": abs, "round": round,
+}
+
+def desi_print(val, out):
+    if isinstance(val, list) and val and isinstance(val[0], dict):
+        hdrs = list(val[0].keys())
+        out.append(("table", "📊 DATA (" + str(len(val)) + " rows)"))
+        out.append(("table", " | ".join(f"{h:<14}" for h in hdrs)))
+        out.append(("table", "─" * (len(hdrs)*17)))
+        for row in val[:20]:
+            out.append(("table", " | ".join(f"{str(row.get(h,'')):<14}" for h in hdrs)))
+        if len(val) > 20:
+            out.append(("table", f"... aur {len(val)-20} rows"))
+    else:
+        out.append(("normal", str(val)))
+
+# ── CORE RUNNER ──────────────────────────────────────────────
+def run_desi(code, out, inputs_list, _vars=None, _funcs=None):
+    variables = _vars if _vars is not None else {}
+    functions = _funcs if _funcs is not None else {}
+    input_idx = [0]
+
+    def get_input(prompt):
+        out.append(("input_prompt", prompt))
+        if input_idx[0] < len(inputs_list):
+            val = inputs_list[input_idx[0]]
+            input_idx[0] += 1
+            out.append(("input_echo", "> " + str(val)))
+            try: return int(val)
+            except:
+                try: return float(val)
+                except: return val
+        return ""
+
+    def parse_val(v):
+        try: return int(v)
+        except:
+            try: return float(v)
+            except: return v
+
+    def get_ctx():
+        ctx = {**BASE_CTX, **variables}
+        for fname, fdef in functions.items():
+            ctx[fname] = make_callable(fname)
+        return ctx
+
+    def make_callable(fname):
+        def fn(*args):
+            return call_func(fname, list(args))
+        return fn
+
+    def call_func(fname, args):
+        if fname not in functions:
+            out.append(("error", f"❌ '{fname}' naam ka kaam nahi mila!"))
+            return None
+        fdef = functions[fname]
+        local_vars = dict(variables)
+        for p, a in zip(fdef["params"], args):
+            local_vars[p] = a
+        ret = run_desi("\\n".join(fdef["body"]), out, inputs_list, local_vars, functions)
+        return ret
+
+    lines = code.split("\\n")
+
+    # ── PASS 1: Collect kaam (functions) ──
+    skip = set()
+    i = 0
+    while i < len(lines):
+        line = lines[i].strip()
+        if line.startswith("kaam "):
+            skip.add(i)
+            header = line[5:].strip().rstrip(":")
+            if "(" in header:
+                fname = header[:header.index("(")].strip()
+                pstr  = header[header.index("(")+1:header.index(")")].strip()
+                params = [p.strip() for p in pstr.split(",") if p.strip()]
+            else:
+                fname = header.strip(); params = []
+            body = []; i += 1
+            nest = 0
+            while i < len(lines):
+                curr = lines[i].strip()
+                skip.add(i)
+                if curr.startswith("kaam "): nest += 1
+                if curr == "khatam":
+                    if nest == 0: break
+                    nest -= 1
+                body.append(lines[i]); i += 1
+            skip.add(i)
+            functions[fname] = {"params": params, "body": body}
+        i += 1
+
+    # ── PASS 2: Run code ──
+    i = 0
+    while i < len(lines):
+        if i in skip: i += 1; continue
+
+        raw  = lines[i]
+        line = raw.strip()
+        if not line or line.startswith("#"): i += 1; continue
+
+        ctx = get_ctx()
+
+        # bolo / bol
+        if line.startswith("bolo ") or line.startswith("bol "):
+            expr = line[5:].strip() if line.startswith("bolo ") else line[4:].strip()
+            # Pure string (exactly 2 quotes, no concatenation)
+            if expr.startswith('"') and expr.endswith('"') and expr.count('"') == 2:
+                out.append(("normal", expr[1:-1]))
+            else:
+                try:
+                    desi_print(eval(expr, {}, ctx), out)
+                except Exception as e:
+                    out.append(("error", f"⚠️ bolo error: {expr} → {e}"))
+            i += 1
+
+        # mano
+        elif line.startswith("mano "):
+            parts = line[5:].split("=", 1)
+            if len(parts) < 2:
+                out.append(("error", f"❌ Line {i+1}: '=' nahi mila")); i += 1; continue
+            vname = parts[0].strip()
+            expr  = parts[1].strip()
+            if expr.startswith("pooch "):
+                prompt = expr[6:].strip().strip('"')
+                variables[vname] = get_input(prompt)
+            else:
+                try: variables[vname] = eval(expr, {}, ctx)
+                except Exception as e:
+                    out.append(("error", f"❌ mano '{vname}': {e}"))
+            i += 1
+
+        # wapas (return)
+        elif line.startswith("wapas "):
+            expr = line[6:].strip()
+            try: return eval(expr, {}, ctx)
+            except Exception as e:
+                out.append(("error", f"❌ wapas error: {e}"))
+                return None
+
+        # agar
+        elif line.startswith("agar "):
+            cond = line[5:].strip()
+            try: res = eval(cond, {}, ctx)
+            except: res = False
+            if res: i += 1
+            else:
+                nest = 0
+                while i < len(lines):
+                    i += 1
+                    if i >= len(lines): break
+                    c = lines[i].strip()
+                    if c.startswith("agar "): nest += 1
+                    if c == "bas":
+                        if nest == 0: break
+                        nest -= 1
+                    if c == "warna" and nest == 0: break
+
+        # warna
+        elif line == "warna":
+            nest = 0
+            while i < len(lines):
+                i += 1
+                if i >= len(lines): break
+                c = lines[i].strip()
+                if c.startswith("agar "): nest += 1
+                if c == "bas":
+                    if nest == 0: break
+                    nest -= 1
+            i += 1
+
+        elif line == "bas": i += 1
+
+        # jab tak
+        elif line.startswith("jab tak "):
+            cond = line[8:].strip()
+            try:
+                if eval(cond, {}, get_ctx()): i += 1
+                else:
+                    nest = 0
+                    while i < len(lines):
+                        i += 1
+                        if i >= len(lines): break
+                        c = lines[i].strip()
+                        if c.startswith("jab tak "): nest += 1
+                        if c == "khatam":
+                            if nest == 0: break
+                            nest -= 1
+                    i += 1
+            except: i += 1
+
+        # khatam (loop end)
+        elif line == "khatam":
+            s = i; nest = 0
+            while s >= 0:
+                t = lines[s].strip()
+                if t == "khatam": nest += 1
+                elif t.startswith("jab tak "):
+                    if nest == 1: i = s; break
+                    else: nest -= 1
+                s -= 1
+            if s < 0: i += 1
+
+        elif line == "safai":
+            out.clear(); out.append(("info", "🧹 Screen saaf ho gayi!")); i += 1
+
+        elif line.startswith("ruko "):
+            out.append(("info", f"⏳ ruko {line[5:].strip()} sec...")); i += 1
+
+        # Direct function call ya expression
+        else:
+            try: eval(line, {}, ctx)
+            except Exception as e:
+                out.append(("error", f"❌ Line {i+1}: samajh nahi aaya → '{line}'"))
+            i += 1
+
+    return None
+`;
+
+// ===================== PYODIDE SETUP =====================
+async function loadPyodideEngine() {
+  try {
+    document.getElementById('loading-msg').textContent = '🇮🇳 DesiLang Interpreter boot ho raha hai...';
+    pyodide = await loadPyodide();
+    document.getElementById('loading-msg').textContent = '⚙️ Hinglish commands register ho rahi hain...';
+    await pyodide.runPythonAsync(INTERPRETER_PY);
+    isReady = true;
+    document.getElementById('status-dot').className = 'status-dot ready';
+    document.getElementById('status-text').textContent = 'Ready hai! ✓';
+    document.getElementById('run-btn').disabled = false;
+    const ov = document.getElementById('loading-overlay');
+    ov.style.opacity = '0';
+    setTimeout(() => ov.style.display = 'none', 500);
+    loadExample('hello', document.querySelector('.example-btn.active'));
+  } catch(e) {
+    document.getElementById('loading-msg').textContent = 'Error: ' + e.message;
+    document.getElementById('status-dot').className = 'status-dot error';
+    document.getElementById('status-text').textContent = 'Load fail ✗';
+  }
+}
+
+// ===================== INPUT SYSTEM =====================
+function askUser(prompt) {
+  return new Promise(resolve => {
+    inputResolve = resolve;
+    document.getElementById('modal-prompt').textContent = prompt || 'Kuch daalo:';
+    document.getElementById('modal-input').value = '';
+    document.getElementById('input-modal').classList.add('show');
+    setTimeout(() => document.getElementById('modal-input').focus(), 100);
+  });
+}
+
+function submitInput() {
+  const val = document.getElementById('modal-input').value;
+  document.getElementById('input-modal').classList.remove('show');
+  if (inputResolve) { inputResolve(val); inputResolve = null; }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('input-modal').classList.contains('show')) {
+    submitInput();
+  }
+});
+
+// ===================== RUN CODE =====================
+async function runCode() {
+  if (!isReady) return;
+  const code = document.getElementById('code-editor').value;
+  const output = document.getElementById('output');
+  const runBtn = document.getElementById('run-btn');
+  runBtn.disabled = true;
+  runBtn.innerHTML = '<span>⏳</span> Chal raha hai...';
+  output.innerHTML = '';
+
+  // Collect pooch inputs
+  let collectedInputs = [];
+  const poochCount = (code.match(/pooch\s+/g) || []).length;
+  if (poochCount > 0) {
+    const regex = /pooch\s+"([^"]*)"/g;
+    const matches = [...code.matchAll(regex)];
+    for (let p = 0; p < poochCount; p++) {
+      const promptText = matches[p] ? matches[p][1] : `Input ${p+1}`;
+      const val = await askUser(promptText);
+      collectedInputs.push(val);
+    }
+  }
+
+  try {
+    const t0 = Date.now();
+    const result = await pyodide.runPythonAsync(`
+out = []
+try:
+    run_desi(${JSON.stringify(code)}, out, ${JSON.stringify(collectedInputs)})
+except Exception as e:
+    out.append(("error", f"💥 {e}"))
+[[x[0], x[1]] for x in out]
+`);
+    const elapsed = Date.now() - t0;
+    const lines = result.toJs();
+    output.innerHTML = '';
+
+    if (!lines.length) {
+      output.innerHTML = '<span class="output-info">✅ Code chala! Output nahi aaya.</span>';
+    } else {
+      lines.forEach(([type, text]) => {
+        const d = document.createElement('div');
+        if (type === 'error') d.className = 'output-error';
+        else if (type === 'table') d.className = 'output-table';
+        else if (type === 'info') d.className = 'output-info';
+        else if (type === 'input_prompt') { d.className = 'output-info'; d.textContent = '❓ ' + text; output.appendChild(d); return; }
+        else if (type === 'input_echo') { d.className = 'output-success'; d.textContent = text; output.appendChild(d); return; }
+        else d.className = 'output-line';
+        d.textContent = text;
+        output.appendChild(d);
+      });
+    }
+
+    const td = document.createElement('div');
+    td.style.cssText = 'margin-top:12px;color:#2D3748;font-size:11px;border-top:1px solid #1E2A45;padding-top:8px;';
+    td.textContent = `⏱ ${elapsed}ms mein chala`;
+    output.appendChild(td);
+  } catch(e) {
+    output.innerHTML = `<span class="output-error">💥 Error: ${e.message}</span>`;
+  }
+
+  runBtn.disabled = false;
+  runBtn.innerHTML = '<span>▶</span> Chalao!';
+}
+
+// ===================== HELPERS =====================
+function loadExample(name, btn) {
+  document.getElementById('code-editor').value = EXAMPLES[name] || '';
+  updateLineNumbers();
+  document.querySelectorAll('.example-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
+function updateLineNumbers() {
+  const lines = document.getElementById('code-editor').value.split('\n');
+  document.getElementById('line-numbers').innerHTML =
+    lines.map((_,i) => `<div class="line-num">${i+1}</div>`).join('');
+}
+
+function syncScroll() {
+  document.getElementById('line-numbers').scrollTop =
+    document.getElementById('code-editor').scrollTop;
+}
+
+function handleTab(e) {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const ta = e.target, s = ta.selectionStart, en = ta.selectionEnd;
+    ta.value = ta.value.substring(0,s) + '    ' + ta.value.substring(en);
+    ta.selectionStart = ta.selectionEnd = s + 4;
+    updateLineNumbers();
+  }
+  if (e.key === 'Enter' && e.ctrlKey) runCode();
+}
+
+function clearOutput() {
+  document.getElementById('output').innerHTML = '<span class="output-info">🧹 Saaf ho gayi!</span>';
+}
+
+loadPyodideEngine();
+updateLineNumbers();
+</script>
+</body>
+</html>
