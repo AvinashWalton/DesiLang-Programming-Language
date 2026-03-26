@@ -1,0 +1,59 @@
+name: 🚀 DesiLang Auto Deploy
+
+# Jab bhi main branch par push hoga, ye workflow chalega
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  # ============================================================
+  # JOB 1: PyPI par auto-publish
+  # ============================================================
+  publish-to-pypi:
+    name: 📦 PyPI par Publish karo
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Code download karo
+        uses: actions/checkout@v4
+
+      - name: 🐍 Python setup karo
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 🔧 Build tools install karo
+        run: |
+          pip install build twine
+
+      - name: 📦 Package build karo
+        run: python -m build
+
+      - name: 🚀 PyPI par upload karo
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: twine upload dist/* --skip-existing
+
+  # ============================================================
+  # JOB 2: GitHub Pages par Playground deploy karo
+  # ============================================================
+  deploy-playground:
+    name: 🌐 Playground Deploy karo
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: 📥 Code download karo
+        uses: actions/checkout@v4
+
+      - name: 🌐 GitHub Pages par deploy karo
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          publish_branch: gh-pages
